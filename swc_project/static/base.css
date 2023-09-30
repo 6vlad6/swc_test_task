@@ -1,0 +1,201 @@
+@font-face {
+    font-family: 'Roboto', sans-serif;
+    src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto', sans-serif;
+    src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+    font-weight: bold;
+}
+
+* {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+html {
+  margin-bottom: 0;
+}
+
+body {
+    margin-bottom: 0;
+	background: linear-gradient(116.43deg, #F3F9FF 30.33%, #F0F4F8 103.65%);
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content {
+    min-height: 100vh;
+    margin-bottom: 200px;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.my-navbar button {
+    width: 47px;
+    height: 34px;
+    border-color: #0047AB;
+}
+
+.my-navbar span {
+    width: 100%;
+    float: left;
+    height: 2px;
+    background-color: #212121;
+    margin-bottom: 3px;
+}
+
+.my-navbar .link {
+    color: #042437;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 150.5%;
+}
+
+.my-navbar .link:hover, .nav-link.active.link:hover{
+    border-bottom: #042437 1px solid;
+}
+
+.my-navbar .link:active, .nav-link.active.link:active{
+    border-bottom: #042437 1px solid;
+}
+
+.navbar-name {
+    text-align: left;
+    letter-spacing: -0.015em;
+    font-size: 16px;
+    left: calc(50% - 77px/2 + 479.5px);
+    top: calc(50% - 31px/2 - 915.5px);
+    width: 100px;
+    height: 31px;
+    font-style: normal;
+    color: #042437;
+}
+
+#loginBTN {
+    background: #FFFFFF;
+    border-radius: 16px;
+    font-weight: bold;
+    width: 74px;
+    height: 36x;
+    color: #212121;
+    text-align: center;
+}
+
+#loginBTN:hover, #loginBTN:active {
+    background: #212121;
+    color: #FFFFFF
+}
+
+a {
+	text-decoration: none;
+	color: none;
+}
+
+i {
+    color: #042437
+}
+
+.auth-form p, label {
+    font-weight: normal;
+    color: #042437;
+}
+
+.auth-form .no-acc {
+    color: #042437;
+    font-weight: normal;
+}
+
+.error-list li {
+    color: red;
+    font-weight: bold;
+    margin-right: 35px;
+}
+
+.field {
+    font-style: normal;
+    font-weight: bold;
+    border-color: #F3F8FE;
+    background-color: linear-gradient(116.43deg, #F3F9FF 30.33%, #F0F4F8 103.65%);
+}
+
+.field:hover, .field:active {
+    border-color: #042437;
+    background-color: linear-gradient(116.43deg, #F3F9FF 30.33%, #F0F4F8 103.65%);
+}
+
+.btn {
+    border-color: #042437;
+    font-weight: normal;
+}
+
+.btn:hover, .btn:active {
+    background-color: #212121;
+    color: #F3F8FE;
+    border-color: #042437;
+}
+
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}
+
+.my-footer {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+    width: 100%;
+    background: rgba(235, 233, 239, 0.3);
+}
+
+.footer-header {
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 121.5%;
+    letter-spacing: 0.025em;
+    color: #042437;
+}
+
+.fas {
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 121.5%;
+    letter-spacing: 0.025em;
+    color: #042437;
+    opacity: 0.5;
+}
+
+.event-title {
+    border: 1px solid #212121;
+    border-radius: 16px;
+    text-align: center;
+    color: #212121;
+
+}
+
+.my-event-title {
+    border: 1px solid #8c0285;
+    border-radius: 16px;
+    text-align: center;
+}
+
+#event-info-main {
+    border-left: 1px solid #4C90F2;
+}
+
+.participant {
+    color: #4C90F2;
+}

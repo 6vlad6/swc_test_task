@@ -1,0 +1,274 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <title>{% block title %}  {% endblock %}</title>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    {% include 'navbar.html' %}
+
+    <div class="wrapper">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    <script>
+      const navbar = document.querySelector('.my-navbar')
+      window.addEventListener('load', () => {
+        navbar.style.opacity = '1';
+      });
+    </script>
+
+    <script>
+      function GetEvents() {
+
+      var user_id = '{{request.user.id}}';
+      var events_block = document.getElementById('events');
+      events_block.innerHTML = '';
+
+      var my_events_block = document.getElementById('my-events');
+      my_events_block.innerHTML = '';
+
+      $.ajax({
+        url: 'api/events?not_user=aa'.replace('aa', user_id),
+        type: 'GET',
+        success: function(data) {
+          var events = data.events;
+          for (var i = 0; i < events.length; i++) {
+
+            var event_title = events[i].title;
+            var event_id = events[i].id;
+            var event_p = document.createElement('p');
+            event_p.classList.add('event-title');
+            event_p.setAttribute('id', event_id);
+            event_p.setAttribute('onclick', 'NotMyEvent(this.id)');
+            event_p.innerHTML = event_title;
+            events_block.appendChild(event_p);
+          }
+        }
+      });
+
+      $.ajax({
+        url: `{% url 'my-events' %}`,
+        type: 'GET',
+        success: function(data) {
+          var events = data.data.events;
+          for (var i = 0; i < events.length; i++) {
+
+            var event_title = events[i].title;
+            var event_p = document.createElement('p');
+            var event_id = events[i].id;
+
+            event_p.classList.add('my-event-title');
+            event_p.setAttribute('id', event_id);
+            event_p.setAttribute('onclick', 'MyEvent(this.id)');
+            event_p.innerHTML = event_title;
+            my_events_block.appendChild(event_p);
+
+          }
+        }
+      });
+      }
+    </script>
+
+  <script>
+    $(document).ready(GetEvents());
+  </script>
+
+  <script>
+    setInterval(function() {
+      GetEvents();
+      console.log('bbbb')}, 30000);
+  </script>
+
+  <script>
+    function NotMyEvent(id) {
+      var event_info_div = document.getElementById('event-info');
+      event_info_div.innerHTML = '';
+      $.ajax({
+            url: `api/events/${id}`,
+            type: 'GET',
+            success: function(data) {
+              event_data = data.data.event;
+
+              var event_title = document.createElement('p');
+              event_title.innerHTML = event_data['title'];
+              event_info_div.appendChild(event_title);
+
+              var event_text = document.createElement('p');
+              event_text.innerHTML = event_data['text'];
+              event_info_div.appendChild(event_text);
+
+              var event_date = document.createElement('p');
+              event_date.innerHTML = event_data['creation_date'].split("T")[0];
+              event_info_div.appendChild(event_date);
+              
+              var participants_text = document.createElement('h3');
+              participants_text.classList.add('fs-bold');
+              participants_text.innerHTML = "Участники";
+              event_info_div.appendChild(participants_text);
+
+              var participant_ids = event_data['participants'];
+              var participants = [];
+
+              var promises = participant_ids.map(function(participant_id) {
+                return new Promise(function(resolve, reject) {
+                  $.ajax({
+                    url: `api/users/${participant_id}`,
+                    type: 'GET',
+                    success: function(data) {
+                      var user_data = data.data.user;
+                      var user_first_name = user_data['first_name'];
+                      var user_last_name = user_data['last_name'];
+                      participants.push([user_first_name, user_last_name]);
+                      resolve();
+                    },
+                    error: function(error) {
+                      reject(error);
+                    }
+                  });
+              })});
+
+              Promise.all(promises)
+                .then(function() {
+                  for (var i = 0; i < participants.length; i++) {
+                    var participant_p = document.createElement('p');
+                    participant_p.classList.add('fs-bold');
+                    participant_p.classList.add('participant');
+                    participant_p.innerHTML = participants[i][0] + " " + participants[i][1];
+                    event_info_div.appendChild(participant_p);
+                  }
+                })
+                .catch(function(error) {
+                  console.log(error);
+                });
+
+                var btn_participate = document.createElement('a');
+                btn_participate.classList.add('btn');
+                btn_participate.innerHTML = 'Принять участие';
+                btn_participate.setAttribute('id', 'btn-participate');
+                btn_participate.setAttribute('href', `api/events/${id}/participate/`);
+                btn_participate.setAttribute('onclick', 'Participate(this.href); return false');
+                event_info_div.appendChild(btn_participate);
+              }
+            }
+            );
+
+
+      
+    }
+  </script>
+
+<script>
+  function Participate(url) {
+    $.ajax({
+                  url: url,
+                  type: 'POST',
+                  success: function(data) {
+                      console.log(data);
+                  }
+                }
+                );
+}
+</script>
+
+  <script>
+    function MyEvent(id) {
+      var event_info_div = document.getElementById('event-info');
+      event_info_div.innerHTML = '';
+      $.ajax({
+            url: `api/events/${id}`,
+            type: 'GET',
+            success: function(data) {
+              event_data = data.data.event;
+
+              var event_title = document.createElement('p');
+              event_title.innerHTML = event_data['title'];
+              event_info_div.appendChild(event_title);
+
+              var event_text = document.createElement('p');
+              event_text.innerHTML = event_data['text'];
+              event_info_div.appendChild(event_text);
+
+              var event_date = document.createElement('p');
+              event_date.innerHTML = event_data['creation_date'].split("T")[0];
+              event_info_div.appendChild(event_date);
+              
+              var participants_text = document.createElement('h3');
+              participants_text.classList.add('fs-bold');
+              participants_text.innerHTML = "Участники";
+              event_info_div.appendChild(participants_text);
+
+              var participant_ids = event_data['participants'];
+              var participants = [];
+
+              var promises = participant_ids.map(function(participant_id) {
+                return new Promise(function(resolve, reject) {
+                  $.ajax({
+                    url: `api/users/${participant_id}`,
+                    type: 'GET',
+                    success: function(data) {
+                      var user_data = data.data.user;
+                      var user_first_name = user_data['first_name'];
+                      var user_last_name = user_data['last_name'];
+                      participants.push([user_first_name, user_last_name]);
+                      resolve();
+                    },
+                    error: function(error) {
+                      reject(error);
+                    }
+                  });
+              })});
+
+              Promise.all(promises)
+                .then(function() {
+                  for (var i = 0; i < participants.length; i++) {
+                    var participant_p = document.createElement('p');
+                    participant_p.classList.add('fs-bold');
+                    participant_p.classList.add('participant');
+                    participant_p.innerHTML = participants[i][0] + " " + participants[i][1];
+                    event_info_div.appendChild(participant_p);
+                  }
+                })
+                .catch(function(error) {
+                  console.log(error);
+                });
+
+
+              var btn_participate = document.createElement('a');
+              btn_participate.classList.add('btn');
+              btn_participate.innerHTML = 'Отменить участие';
+              btn_participate.setAttribute('id', 'btn-not-participate');
+              btn_participate.setAttribute('href', `api/events/${id}/cancel-participation`);
+              btn_participate.setAttribute('onclick', 'Participate(this.href)');
+              event_info_div.appendChild(btn_participate);
+
+
+              }
+            });
+
+      
+    }
+  </script>
+
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+<!--  <script type="text/javascript" src="{% static 'scripts.js' %}"></script>-->
+
+  </body>
+</html>
